@@ -26,6 +26,12 @@ typedef struct {
     int ticketCount;// 订票数量
 } Booking;
 
+// 全局变量
+Train trains[MAX_TRAINS];
+int trainCount = 0;
+Booking bookings[MAX_BOOKINGS];
+int bookingCount = 0;
+
 // 函数声明
 void showMenu();
 void addTrain();
@@ -48,4 +54,54 @@ void showMenu() {
     printf("6. 保存数据\n");
     printf("7. 退出\n");
     printf("请选择: ");
+}
+
+// 添加火车信息
+void addTrain() {
+    if (trainCount >= MAX_TRAINS) {
+        printf("火车信息已达到最大数量限制！\n");
+        return;
+    }
+
+    Train newTrain;
+    printf("\n=== 添加火车信息 ===\n");
+    
+    printf("请输入车次: ");
+    scanf("%9s", newTrain.trainNo);
+    clearInputBuffer();
+
+    // 检查车次是否已存在
+    for (int i = 0; i < trainCount; i++) {
+        if (strcmp(trains[i].trainNo, newTrain.trainNo) == 0) {
+            printf("该车次已存在！\n");
+            return;
+        }
+    }
+
+    printf("请输入始发站: ");
+    scanf("%29s", newTrain.startStation);
+    clearInputBuffer();
+
+    printf("请输入终点站: ");
+    scanf("%29s", newTrain.endStation);
+    clearInputBuffer();
+
+    printf("请输入发车时间(格式: HH:MM): ");
+    scanf("%9s", newTrain.startTime);
+    clearInputBuffer();
+
+    printf("请输入到站时间(格式: HH:MM): ");
+    scanf("%9s", newTrain.endTime);
+    clearInputBuffer();
+
+    printf("请输入票价: ");
+    scanf("%f", &newTrain.price);
+    clearInputBuffer();
+
+    printf("请输入剩余票数: ");
+    scanf("%d", &newTrain.remainingTickets);
+    clearInputBuffer();
+
+    trains[trainCount++] = newTrain;
+    printf("火车信息添加成功！\n");
 }
