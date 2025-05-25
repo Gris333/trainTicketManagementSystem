@@ -25,3 +25,27 @@ typedef struct {
     char phone[15];// 联系电话
     int ticketCount;// 订票数量
 } Booking;
+
+// 函数声明
+void showMenu();
+void addTrain();
+void searchTrain();
+void bookTicket();
+void modifyTrain();
+void showTrains();
+void saveData();
+void loadData();
+void clearInputBuffer();
+
+// 主菜单
+void showMenu() {
+    printf("\n=== 火车票订票系统 ===\n");
+    printf("1. 添加火车信息\n");
+    printf("2. 查询火车信息\n");
+    printf("3. 订票\n");
+    printf("4. 修改火车信息\n");
+    printf("5. 显示所有火车信息\n");
+    printf("6. 保存数据\n");
+    printf("7. 退出\n");
+    printf("请选择: ");
+}
