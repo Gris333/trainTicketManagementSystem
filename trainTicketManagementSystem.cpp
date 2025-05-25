@@ -111,3 +111,65 @@ void addTrain() {
     trains[trainCount++] = newTrain;
     printf("火车信息添加成功！\n");
 }
+
+// 查询火车信息
+void searchTrain() {
+    int choice;
+    printf("\n=== 查询火车信息 ===\n");
+    printf("1. 按车次查询\n");
+    printf("2. 按城市查询\n");
+    printf("请选择查询方式: ");
+    scanf("%d", &choice);
+    clearInputBuffer();
+
+    if (choice == 1) {
+        char trainNo[10];
+        printf("请输入要查询的车次: ");
+        scanf("%9s", trainNo);
+        clearInputBuffer();
+
+        int found = 0;
+        for (int i = 0; i < trainCount; i++) {
+            if (strcmp(trains[i].trainNo, trainNo) == 0) {
+                printf("\n车次: %s\n", trains[i].trainNo);
+                printf("始发站: %s\n", trains[i].startStation);
+                printf("终点站: %s\n", trains[i].endStation);
+                printf("发车时间: %s\n", trains[i].startTime);
+                printf("到站时间: %s\n", trains[i].endTime);
+                printf("票价: %.2f\n", trains[i].price);
+                printf("剩余票数: %d\n", trains[i].remainingTickets);
+                found = 1;
+                break;
+            }
+        }
+        if (!found) {
+            printf("未找到该车次信息！\n");
+        }
+    } else if (choice == 2) {
+        char city[MAX_STATION];
+        printf("请输入要查询的城市: ");
+        scanf("%29s", city);
+        clearInputBuffer();
+
+        int found = 0;
+        for (int i = 0; i < trainCount; i++) {
+            if (strcmp(trains[i].startStation, city) == 0 || 
+                strcmp(trains[i].endStation, city) == 0) {
+                printf("\n车次: %s\n", trains[i].trainNo);
+                printf("始发站: %s\n", trains[i].startStation);
+                printf("终点站: %s\n", trains[i].endStation);
+                printf("发车时间: %s\n", trains[i].startTime);
+                printf("到站时间: %s\n", trains[i].endTime);
+                printf("票价: %.2f\n", trains[i].price);
+                printf("剩余票数: %d\n", trains[i].remainingTickets);
+                printf("------------------------\n");
+                found = 1;
+            }
+        }
+        if (!found) {
+            printf("未找到经过该城市的车次信息！\n");
+        }
+    } else {
+        printf("无效的选择！\n");
+    }
+}
