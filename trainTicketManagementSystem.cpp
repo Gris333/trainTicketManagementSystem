@@ -273,3 +273,173 @@ void bookTicket() {
     printf("订票数量: %d\n", newBooking.ticketCount);
     printf("总价: %.2f\n", newBooking.ticketCount * trains[trainIndex].price);
 }
+
+// 修改火车信息
+void modifyTrain() {
+    char trainNo[10];
+    printf("\n=== 修改火车信息 ===\n");
+    printf("请输入要修改的车次: ");
+    scanf("%9s", trainNo);
+    clearInputBuffer();
+
+    int trainIndex = -1;
+    for (int i = 0; i < trainCount; i++) {
+        if (strcmp(trains[i].trainNo, trainNo) == 0) {
+            trainIndex = i;
+            break;
+        }
+    }
+
+    if (trainIndex == -1) {
+        printf("未找到该车次！\n");
+        return;
+    }
+
+    printf("\n当前信息：\n");
+    printf("始发站: %s\n", trains[trainIndex].startStation);
+    printf("终点站: %s\n", trains[trainIndex].endStation);
+    printf("发车时间: %s\n", trains[trainIndex].startTime);
+    printf("到站时间: %s\n", trains[trainIndex].endTime);
+    printf("票价: %.2f\n", trains[trainIndex].price);
+    printf("剩余票数: %d\n", trains[trainIndex].remainingTickets);
+
+    printf("\n请输入新的信息：\n");
+    printf("始发站: ");
+    scanf("%29s", trains[trainIndex].startStation);
+    clearInputBuffer();
+
+    printf("终点站: ");
+    scanf("%29s", trains[trainIndex].endStation);
+    clearInputBuffer();
+
+    printf("发车时间(格式: HH:MM): ");
+    scanf("%9s", trains[trainIndex].startTime);
+    clearInputBuffer();
+
+    printf("到站时间(格式: HH:MM): ");
+    scanf("%9s", trains[trainIndex].endTime);
+    clearInputBuffer();
+
+    printf("票价: ");
+    scanf("%f", &trains[trainIndex].price);
+    clearInputBuffer();
+
+    printf("剩余票数: ");
+    scanf("%d", &trains[trainIndex].remainingTickets);
+    clearInputBuffer();
+
+    printf("火车信息修改成功！\n");
+}
+
+// 显示所有火车信息
+void showTrains() {
+    printf("\n=== 所有火车信息 ===\n");
+    if (trainCount == 0) {
+        printf("暂无火车信息！\n");
+        return;
+    }
+
+    for (int i = 0; i < trainCount; i++) {
+        printf("\n车次: %s\n", trains[i].trainNo);
+        printf("始发站: %s\n", trains[i].startStation);
+        printf("终点站: %s\n", trains[i].endStation);
+        printf("发车时间: %s\n", trains[i].startTime);
+        printf("到站时间: %s\n", trains[i].endTime);
+        printf("票价: %.2f\n", trains[i].price);
+        printf("剩余票数: %d\n", trains[i].remainingTickets);
+        printf("------------------------\n");
+    }
+}
+
+// 保存数据
+void saveData() {
+    FILE *trainFile = fopen("trains.dat", "wb");
+    if (trainFile == NULL) {
+        printf("无法打开火车信息文件！\n");
+        return;
+    }
+
+    fwrite(&trainCount, sizeof(int), 1, trainFile);
+    fwrite(trains, sizeof(Train), trainCount, trainFile);
+    fclose(trainFile);
+
+    FILE *bookingFile = fopen("bookings.dat", "wb");
+    if (bookingFile == NULL) {
+        printf("无法打开订票信息文件！\n");
+        return;
+    }
+
+    fwrite(&bookingCount, sizeof(int), 1, bookingFile);
+    fwrite(bookings, sizeof(Booking), bookingCount, bookingFile);
+    fclose(bookingFile);
+
+    printf("数据保存成功！\n");
+}
+
+// 加载数据
+void loadData() {
+    FILE *trainFile = fopen("trains.dat", "rb");
+    if (trainFile != NULL) {
+        fread(&trainCount, sizeof(int), 1, trainFile);
+        fread(trains, sizeof(Train), trainCount, trainFile);
+        fclose(trainFile);
+    }
+
+    FILE *bookingFile = fopen("bookings.dat", "rb");
+    if (bookingFile != NULL) {
+        fread(&bookingCount, sizeof(int), 1, bookingFile);
+        fread(bookings, sizeof(Booking), bookingCount, bookingFile);
+        fclose(bookingFile);
+    }
+}
+
+// 清除输入缓冲区
+void clearInputBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+int main() {
+    int choice;
+    
+    // 加载保存的数据
+    loadData();
+
+    while (1) {
+        showMenu();
+        if (scanf("%d", &choice) != 1) {
+            clearInputBuffer();
+            printf("输入无效，请输入数字！\n");
+            continue;
+        }
+        clearInputBuffer();
+
+        switch (choice) {
+            case 1:
+                addTrain();
+                break;
+            case 2:
+                searchTrain();
+                break;
+            case 3:
+                bookTicket();
+                break;
+            case 4:
+                modifyTrain();
+                break;
+            case 5:
+                showTrains();
+                break;
+            case 6:
+                saveData();
+                break;
+            case 7:
+                printf("感谢使用，再见！\n");
+                return 0;
+            default:
+                printf("无效的选择，请重试！\n");
+        }
+    }
+
+    return 0;
+} 
