@@ -99,7 +99,7 @@ void addTrain() {
     clearInputBuffer();
 
     printf("请输入票价: ");
-    scanf("%f", &newTrain.price);
+    scanf("%.2f", &newTrain.price);
     clearInputBuffer();
 
     printf("请输入剩余票数: ");
