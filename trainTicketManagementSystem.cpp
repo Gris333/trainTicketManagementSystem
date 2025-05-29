@@ -18,12 +18,6 @@ typedef struct {
     int remainingTickets;// 剩余票数
 } Train;
 
-// 全局变量
-Train trains[MAX_TRAINS];
-int trainCount = 0;
-Booking bookings[MAX_BOOKINGS];
-int bookingCount = 0;
-
 typedef struct {
     char trainNo[10];// 车次
     char passengerName[MAX_NAME];// 乘客姓名
@@ -37,6 +31,7 @@ Train trains[MAX_TRAINS];
 int trainCount = 0;
 Booking bookings[MAX_BOOKINGS];
 int bookingCount = 0;
+
 
 // 函数声明
 void showMenu();
