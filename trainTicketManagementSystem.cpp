@@ -210,7 +210,7 @@ void bookTicket() {
     }
 
     if (!found) {
-        printf("没有找到符合条件的车次！\n");
+        printf("没有找到符合条件的有票车次！\n");
         return;
     }
 
@@ -420,30 +420,50 @@ void saveData() {
 void loadData() {
     FILE *trainFile = fopen("trains.txt", "r");
     if (trainFile != NULL) {
-        fscanf(trainFile, "%d", &trainCount);
-        for (int i = 0; i < trainCount; i++) {
-            fscanf(trainFile, "%s %s %s %s %s %f %d",
-                   trains[i].trainNo,
-                   trains[i].startStation,
-                   trains[i].endStation,
-                   trains[i].startTime,
-                   trains[i].endTime,
-                   &trains[i].price,
-                   &trains[i].remainingTickets);
+        int total;
+        if (fscanf(trainFile, "火车总数: %d\n", &total) == 1) {
+            trainCount = total;
+            for (int i = 0; i < trainCount; i++) {
+                fscanf(trainFile, 
+                    "车次: %s\n"
+                    "始发站: %s\n"
+                    "终点站: %s\n"
+                    "发车时间: %s\n"
+                    "到站时间: %s\n"
+                    "票价: %f\n"
+                    "剩余票数: %d\n"
+                    "--------------------\n",
+                    trains[i].trainNo,
+                    trains[i].startStation,
+                    trains[i].endStation,
+                    trains[i].startTime,
+                    trains[i].endTime,
+                    &trains[i].price,
+                    &trains[i].remainingTickets);
+            }
         }
         fclose(trainFile);
     }
 
     FILE *bookingFile = fopen("bookings.txt", "r");
     if (bookingFile != NULL) {
-        fscanf(bookingFile, "%d", &bookingCount);
-        for (int i = 0; i < bookingCount; i++) {
-            fscanf(bookingFile, "%s %s %s %s %d",
-                   bookings[i].trainNo,
-                   bookings[i].passengerName,
-                   bookings[i].idCard,
-                   bookings[i].phone,
-                   &bookings[i].ticketCount);
+        int total;
+        if (fscanf(bookingFile, "订单总数: %d\n", &total) == 1) {
+            bookingCount = total;
+            for (int i = 0; i < bookingCount; i++) {
+                fscanf(bookingFile,
+                    "车次: %s\n"
+                    "乘客姓名: %s\n"
+                    "身份证号: %s\n"
+                    "联系电话: %s\n"
+                    "订票数量: %d\n"
+                    "--------------------\n",
+                    bookings[i].trainNo,
+                    bookings[i].passengerName,
+                    bookings[i].idCard,
+                    bookings[i].phone,
+                    &bookings[i].ticketCount);
+            }
         }
         fclose(bookingFile);
     }
