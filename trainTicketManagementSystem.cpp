@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define MAX_NAME 50
 #define MAX_STATION 30
@@ -8,16 +9,18 @@
 #define MAX_TRAINS 100
 #define MAX_BOOKINGS 1000
 
+//车次结构体
 typedef struct {
     char trainNo[10];// 车次
     char startStation[MAX_STATION];// 始发站
     char endStation[MAX_STATION];// 终点站
-    char startTime[MAX_TIME];// 发车时间
-    char endTime[MAX_TIME];// 到站时间
+    char startTime[16];// 发车时间 
+    char endTime[16];// 到站时间
     float price;// 票价
     int remainingTickets;// 剩余票数
 } Train;
 
+//订票结构体
 typedef struct {
     char trainNo[10];// 车次
     char passengerName[MAX_NAME];// 乘客姓名
@@ -43,6 +46,34 @@ void showTrains();
 void saveData();
 void loadData();
 void clearInputBuffer();
+
+//时间逻辑检查
+int isEndTimeAfterStart(const char *start, const char *end) {
+    struct tm tm_start = {0};
+    struct tm tm_end = {0};
+
+    if (sscanf(start, "%d-%d-%d %d:%d",
+               &tm_start.tm_year, &tm_start.tm_mon, &tm_start.tm_mday,
+               &tm_start.tm_hour, &tm_start.tm_min) != 5) {
+        return 0; // 格式错误
+    }
+
+    if (sscanf(end, "%d-%d-%d %d:%d",
+               &tm_end.tm_year, &tm_end.tm_mon, &tm_end.tm_mday,
+               &tm_end.tm_hour, &tm_end.tm_min) != 5) {
+        return 0; // 格式错误
+    }
+
+    tm_start.tm_year -= 1900;
+    tm_start.tm_mon -= 1;
+    tm_end.tm_year -= 1900;
+    tm_end.tm_mon -= 1;
+
+    time_t t_start = mktime(&tm_start);
+    time_t t_end = mktime(&tm_end);
+
+    return (t_end > t_start);
+}
 
 // 主菜单
 void showMenu() {
@@ -87,13 +118,18 @@ void addTrain() {
     scanf("%29s", newTrain.endStation);
     clearInputBuffer();
 
-    printf("请输入发车时间(格式: HH:MM): ");
-    scanf("%9s", newTrain.startTime);
+    printf("请输入发车时间(格式: YYYY-MM-DD HH:MM): ");
+    scanf("%15s", newTrain.startTime);
     clearInputBuffer();
 
-    printf("请输入到站时间(格式: HH:MM): ");
-    scanf("%9s", newTrain.endTime);
+    printf("请输入到站时间(格式: YYYY-MM-DD HH:MM): ");
+    scanf("%15s", newTrain.endTime);
     clearInputBuffer();
+
+    if (!isEndTimeAfterStart(newTrain.startTime, newTrain.endTime)) {
+        printf("错误：到站时间必须晚于发车时间！\n");
+        return;
+    }
 
     printf("请输入票价: ");
     scanf("%f", &newTrain.price);
@@ -276,6 +312,7 @@ void modifyTrain() {
     printf("请输入要修改的车次: ");
     scanf("%9s", trainNo);
     clearInputBuffer();
+    char newStartTime[16],newEndTime[16];
 
     int trainIndex = -1;
     for (int i = 0; i < trainCount; i++) {
@@ -307,13 +344,22 @@ void modifyTrain() {
     scanf("%29s", trains[trainIndex].endStation);
     clearInputBuffer();
 
-    printf("发车时间(格式: HH:MM): ");
-    scanf("%9s", trains[trainIndex].startTime);
+    printf("发车时间(YYYY-MM-DD HH:MM): ");
+    scanf("%15s", newStartTime);
     clearInputBuffer();
 
-    printf("到站时间(格式: HH:MM): ");
-    scanf("%9s", trains[trainIndex].endTime);
+    printf("到站时间(YYYY-MM-DD HH:MM): ");
+    scanf("%15s", newEndTime);
     clearInputBuffer();
+
+    if (!isEndTimeAfterStart(newStartTime, newEndTime)) {
+        printf("错误：到站时间必须晚于发车时间！\n");
+        return;
+    }
+
+    //验证通过再赋值
+    strcpy(trains[trainIndex].startTime, newStartTime);
+    strcpy(trains[trainIndex].endTime, newEndTime);
 
     printf("票价: ");
     scanf("%f", &trains[trainIndex].price);
