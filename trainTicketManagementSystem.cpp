@@ -47,34 +47,6 @@ void saveData();
 void loadData();
 void clearInputBuffer();
 
-//时间逻辑检查
-int isEndTimeAfterStart(const char *start, const char *end) {
-    struct tm tm_start = {0};
-    struct tm tm_end = {0};
-
-    if (sscanf(start, "%d-%d-%d %d:%d",
-               &tm_start.tm_year, &tm_start.tm_mon, &tm_start.tm_mday,
-               &tm_start.tm_hour, &tm_start.tm_min) != 5) {
-        return 0; // 格式错误
-    }
-
-    if (sscanf(end, "%d-%d-%d %d:%d",
-               &tm_end.tm_year, &tm_end.tm_mon, &tm_end.tm_mday,
-               &tm_end.tm_hour, &tm_end.tm_min) != 5) {
-        return 0; // 格式错误
-    }
-
-    tm_start.tm_year -= 1900;
-    tm_start.tm_mon -= 1;
-    tm_end.tm_year -= 1900;
-    tm_end.tm_mon -= 1;
-
-    time_t t_start = mktime(&tm_start);
-    time_t t_end = mktime(&tm_end);
-
-    return (t_end > t_start);
-}
-
 // 主菜单
 void showMenu() {
     printf("\n=== 火车票订票系统 ===\n");
@@ -125,11 +97,6 @@ void addTrain() {
     printf("请输入到站时间(格式: YYYY-MM-DD HH:MM): ");
     scanf("%15s", newTrain.endTime);
     clearInputBuffer();
-
-    if (!isEndTimeAfterStart(newTrain.startTime, newTrain.endTime)) {
-        printf("错误：到站时间必须晚于发车时间！\n");
-        return;
-    }
 
     printf("请输入票价: ");
     scanf("%f", &newTrain.price);
@@ -358,11 +325,6 @@ void modifyTrain() {
     printf("到站时间(YYYY-MM-DD HH:MM): ");
     scanf("%15s", newEndTime);
     clearInputBuffer();
-
-    if (!isEndTimeAfterStart(newStartTime, newEndTime)) {
-        printf("错误：到站时间必须晚于发车时间！\n");
-        return;
-    }
 
     //验证通过再赋值
     strcpy(trains[trainIndex].startTime, newStartTime);
