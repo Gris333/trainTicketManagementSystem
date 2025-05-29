@@ -348,42 +348,88 @@ void showTrains() {
 
 // 保存数据
 void saveData() {
-    FILE *trainFile = fopen("trains.dat", "wb");
+    FILE *trainFile = fopen("trains.txt", "w");
     if (trainFile == NULL) {
         printf("无法打开火车信息文件！\n");
         return;
     }
 
-    fwrite(&trainCount, sizeof(int), 1, trainFile);
-    fwrite(trains, sizeof(Train), trainCount, trainFile);
+    fprintf(trainFile, "火车总数: %d\n\n", trainCount);
+    for (int i = 0; i < trainCount; i++) {
+        fprintf(trainFile,
+                "车次: %s\n"
+                "始发站: %s\n"
+                "终点站: %s\n"
+                "发车时间: %s\n"
+                "到站时间: %s\n"
+                "票价: %.2f\n"
+                "剩余票数: %d\n"
+                "--------------------\n",
+                trains[i].trainNo,
+                trains[i].startStation,
+                trains[i].endStation,
+                trains[i].startTime,
+                trains[i].endTime,
+                trains[i].price,
+                trains[i].remainingTickets);
+    }
     fclose(trainFile);
 
-    FILE *bookingFile = fopen("bookings.dat", "wb");
+    FILE *bookingFile = fopen("bookings.txt", "w");
     if (bookingFile == NULL) {
         printf("无法打开订票信息文件！\n");
         return;
     }
 
-    fwrite(&bookingCount, sizeof(int), 1, bookingFile);
-    fwrite(bookings, sizeof(Booking), bookingCount, bookingFile);
+    fprintf(bookingFile, "订单总数: %d\n\n", bookingCount);
+    for (int i = 0; i < bookingCount; i++) {
+        fprintf(bookingFile,
+                "车次: %s\n"
+                "乘客姓名: %s\n"
+                "身份证号: %s\n"
+                "联系电话: %s\n"
+                "订票数量: %d\n"
+                "--------------------\n",
+                bookings[i].trainNo,
+                bookings[i].passengerName,
+                bookings[i].idCard,
+                bookings[i].phone,
+                bookings[i].ticketCount);
+    }
     fclose(bookingFile);
 
-    printf("数据保存成功！\n");
+    printf("订票数据与列车数据已保存！\n");
 }
 
 // 加载数据
 void loadData() {
-    FILE *trainFile = fopen("trains.dat", "rb");
+    FILE *trainFile = fopen("trains.txt", "r");
     if (trainFile != NULL) {
-        fread(&trainCount, sizeof(int), 1, trainFile);
-        fread(trains, sizeof(Train), trainCount, trainFile);
+        fscanf(trainFile, "%d", &trainCount);
+        for (int i = 0; i < trainCount; i++) {
+            fscanf(trainFile, "%s %s %s %s %s %f %d",
+                   trains[i].trainNo,
+                   trains[i].startStation,
+                   trains[i].endStation,
+                   trains[i].startTime,
+                   trains[i].endTime,
+                   &trains[i].price,
+                   &trains[i].remainingTickets);
+        }
         fclose(trainFile);
     }
 
-    FILE *bookingFile = fopen("bookings.dat", "rb");
+    FILE *bookingFile = fopen("bookings.txt", "r");
     if (bookingFile != NULL) {
-        fread(&bookingCount, sizeof(int), 1, bookingFile);
-        fread(bookings, sizeof(Booking), bookingCount, bookingFile);
+        fscanf(bookingFile, "%d", &bookingCount);
+        for (int i = 0; i < bookingCount; i++) {
+            fscanf(bookingFile, "%s %s %s %s %d",
+                   bookings[i].trainNo,
+                   bookings[i].passengerName,
+                   bookings[i].idCard,
+                   bookings[i].phone,
+                   &bookings[i].ticketCount);
+        }
         fclose(bookingFile);
     }
 }
